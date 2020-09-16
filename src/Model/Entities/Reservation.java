@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+
+
 public class Reservation {
 
 	private Integer roomNumber;
@@ -56,9 +58,22 @@ public class Reservation {
 		return TimeUnit.DAYS.convert(lonDiff, TimeUnit.MILLISECONDS);
 	}
 	
-	public void updateDates (Date dteCheckIn, Date dteCheckOut) {
+	//muda de void string
+	public String updateDates (Date dteCheckIn, Date dteCheckOut) {
+		
+		Date dteNow = new Date();
+		
+		if (dteCheckIn.before(dteNow) || dteCheckOut.before(dteNow) ) {
+			return "Reservation dates for update must be future dates !" ;  
+		}
+		
+		if (!dteCheckOut.after(dteCheckIn)) {
+			return "Check-out date must be after check-in date !";  
+		}
+
 		this.checkIn  = dteCheckIn;
 		this.checkOut = dteCheckOut;
+		return null; //para quando não der erro
 	}
 	
 	@Override
