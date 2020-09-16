@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-
+import Model.Exceptions.DomainException;
 
 public class Reservation {
 
@@ -18,8 +18,20 @@ public class Reservation {
 		
 	}
 	
-	public Reservation(Integer roomNumber, Date checkIn, Date checkOut) {
+	public Reservation(Integer roomNumber, Date checkIn, Date checkOut) throws DomainException {
 		//super();
+		
+		if (!checkOut.after(checkIn)) {
+			throw new DomainException("Check-out date must be after check-in date !"); 
+		}
+
+		Date dteNow = new Date();
+
+		if (checkIn.before(dteNow) || checkOut.before(dteNow) ) {
+			throw new DomainException("To add a reservation the dates must be future !");  
+		}
+
+		
 		this.roomNumber = roomNumber;
 		this.checkIn    = checkIn;
 		this.checkOut   = checkOut;
@@ -58,22 +70,31 @@ public class Reservation {
 		return TimeUnit.DAYS.convert(lonDiff, TimeUnit.MILLISECONDS);
 	}
 	
-	//muda de void string
-	public String updateDates (Date dteCheckIn, Date dteCheckOut) {
+	public void updateDates (Date dteCheckIn, Date dteCheckOut) throws DomainException {
 		
 		Date dteNow = new Date();
 		
 		if (dteCheckIn.before(dteNow) || dteCheckOut.before(dteNow) ) {
-			return "Reservation dates for update must be future dates !" ;  
+			// lança uma exceção , usando/instanciando um tipo de exceção já existe no Java para quando uma classe recebe 
+			// parametros(argumentos) imvalidos
+			//throw new IllegalArgumentException("Reservation dates for update must be future dates !");  
+			
+			//usando uma exceção personalizada
+			throw new DomainException("Reservation dates for update must be future dates !");  
 		}
 		
 		if (!dteCheckOut.after(dteCheckIn)) {
-			return "Check-out date must be after check-in date !";  
+			//return "Check-out date must be after check-in date !";  
+			//throw new IllegalArgumentException("Check-out date must be after check-in date !"); 
+			
+			//usando uma exceção personalizada
+			throw new DomainException("Check-out date must be after check-in date !"); 
 		}
 
 		this.checkIn  = dteCheckIn;
 		this.checkOut = dteCheckOut;
-		return null; //para quando não der erro
+		//não precisa mais do null, pois não é mais string r voltou a ser void
+		//return null; //para quando não der erro
 	}
 	
 	@Override
